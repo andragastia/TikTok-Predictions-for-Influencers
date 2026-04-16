@@ -39,8 +39,8 @@ Sistem prediksi performa konten TikTok menggunakan Random Forest Classifier untu
 
 - **Tugas Akhir Skripsi**: Implementasi Data Mining untuk Prediksi Trending Video TikTok
 - **Institution**: UPN Veteran Jakarta - Fakultas Ilmu Komputer, S1 Sistem Informasi
-- **Target User**: Content Creator @septianndt
-- **Development**: 2 Hari (6 Phases)
+- **Target User**: 15 Small Content Creators
+- **Development**: 5 months
 
 ---
 
