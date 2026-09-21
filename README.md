@@ -62,7 +62,7 @@ Analisis komprehensif performa konten dengan fitur:
 
 Form interaktif untuk prediksi individual dengan:
 
-- **Input Form**: 22 features lengkap dengan helper text
+- **Input Form**: Form hibrida (caption/NLP + metrik estimasi) yang dipetakan ke 29 fitur model
 - **Real-time Prediction**: Hasil prediksi Trending/Tidak Trending
 - **Confidence Score**: Tingkat keyakinan model dengan probability breakdown
 - **Feature Importance**: Visualisasi faktor paling berpengaruh
@@ -87,19 +87,21 @@ Batch prediction via CSV upload dengan:
 ### Framework & Libraries
 
 - **Streamlit** 1.51.0 - Web application framework
-- **scikit-learn** 1.7.2 - Machine learning model
+- **scikit-learn** 1.5.0 - Machine learning model
 - **Pandas** 2.2.2 - Data manipulation
 - **NumPy** 1.26.4 - Numerical computing
-- **Plotly** 6.5.0 - Interactive visualizations
+- **Plotly** 6.4.0 - Interactive visualizations
 - **openpyxl** 3.1.5 - Excel file support
+- **joblib** 1.4.0 - Model serialization
 
 ### Machine Learning
 
 - **Model**: Random Forest Classifier
 - **Trees**: 100
-- **Max Depth**: 3
-- **Features**: 22 (engagement, content, audio, temporal)
+- **Max Depth**: 10
+- **Features**: 29 (temporal, content, audio, interaction)
 - **Classes**: Binary (0=Tidak Trending, 1=Trending)
+- **Labeling**: Trending = views di atas persentil ke-75 (~7.455 views)
 
 ### Development Tools
 
@@ -157,19 +159,19 @@ streamlit --version
 #### Method 1: Standard Run
 
 ```bash
-streamlit run app.py
+streamlit run 🏠_Beranda.py
 ```
 
 #### Method 2: Custom Port
 
 ```bash
-streamlit run app.py --server.port 8502
+streamlit run 🏠_Beranda.py --server.port 8502
 ```
 
 #### Method 3: Headless Mode
 
 ```bash
-streamlit run app.py --server.headless=true
+streamlit run 🏠_Beranda.py --server.headless=true
 ```
 
 ### Accessing the Application
@@ -247,27 +249,31 @@ Setelah aplikasi berjalan, buka browser dan akses:
 
 ```
 tiktok-prediction-system/
-├── app.py                              # Main application entry point
+├── 🏠_Beranda.py                        # Main application entry point
 ├── pages/                              # Streamlit pages
 │   ├── __init__.py
-│   ├── 1_📊_Analytics_Dashboard.py     # Analytics & insights page
-│   ├── 2_🔮_Prediction.py              # Single prediction page
-│   └── 3_📤_Batch_Prediction.py        # Batch prediction page
+│   ├── 1_📊_Dashboard_Analitik.py      # Analytics & insights page
+│   ├── 2_🔮_Prediksi_Tunggal.py        # Single prediction page
+│   ├── 3_🔧_Preproses_Data.py          # Raw data preprocessing page
+│   ├── 4_📤_Prediksi_Massal.py         # Batch prediction page
+│   └── 5_📝_Input_Data_Baru.py         # Manual data input page
 ├── utils/                              # Utility modules
 │   ├── __init__.py
 │   ├── model_handler.py                # Model operations (load, predict)
 │   ├── data_processor.py               # Data loading & preprocessing
-│   └── visualizations.py               # Chart creation functions
+│   ├── visualizations.py               # Chart creation functions
+│   ├── theme_manager.py                # Light/dark theme handling
+│   └── input_handler.py                # Manual data append to CSV
 ├── models/                             # Machine learning models
-│   └── tiktok_model_final_CLASSIFIER.pkl  # Pre-trained Random Forest
+│   └── tiktok_model_final_CLASSIFIER.pkl  # Pre-trained Random Forest (29 features)
 ├── data/                               # Datasets
-│   └── dataset_tiktok.csv              # TikTok analytics data (159 videos)
+│   └── dataset_tiktok.csv              # TikTok analytics data (998 videos)
 ├── .streamlit/                         # Streamlit configuration
 │   └── config.toml                     # Theme and server settings
-├── requirements.txt                    # Python dependencies
+├── requirements.txt                    # Python dependencies (pinned)
 ├── .gitignore                          # Git ignore rules
 ├── README.md                           # This file
-└── PHASE_COMPLETION_SUMMARY.md         # Development progress
+└── UPDATE_SUMMARY.md                   # Development progress
 ```
 
 ---
@@ -279,65 +285,64 @@ tiktok-prediction-system/
 - **Type**: RandomForestClassifier
 - **Algorithm**: Ensemble learning (bagging)
 - **Number of Trees**: 100
-- **Max Depth**: 3 (to prevent overfitting)
-- **Min Samples Split**: 2
+- **Max Depth**: 10
 - **Classes**: [0, 1] → [Tidak Trending, Trending]
+- **Labeling**: Trending = `playCount` di atas persentil ke-75 (~7.455 views)
 
-### Features (22 total)
+### Features (29 total, wajib exact — lihat `model_handler.feature_names`)
 
-#### Engagement Metrics (3)
+#### Base Features (5)
 
-1. **Suka** - Number of likes
-2. **Komentar** - Number of comments
-3. **Dibagikan** - Number of shares
-
-#### Video Properties (4)
-
-4. **Durasi_Video** - Video duration in seconds
+1. **Durasi_Video** - Video duration in seconds
+2. **Jam_Posting** - Upload hour (0-23)
+3. **Is_Weekend** - 1 jika upload Sabtu/Minggu
+4. **Panjang_Caption** - Caption length (characters)
 5. **Jumlah_Hashtag** - Number of hashtags
-6. **Panjang_Caption** - Caption length
-7. **Format_Konten_Video** - Video format (vertical/horizontal/square)
 
-#### Temporal Features (3)
+#### Content Type (One-hot encoded, 10)
 
-8. **Hari_Upload** - Upload day (0=Monday, 6=Sunday)
-9. **Jam_Upload** - Upload hour (0-23)
-10. **Jam_Sejak_Publikasi** - Hours since publish
+6. **Kat_Beauty**
+7. **Kat_Daily**
+8. **Kat_Edukasi_Karir**
+9. **Kat_Fashion**
+10. **Kat_Gaming**
+11. **Kat_Hiburan**
+12. **Kat_Jedag Jedug**
+13. **Kat_Kuliner**
+14. **Kat_Musik_Konser**
+15. **Kat_Religi**
 
-#### Trend Strength (2)
+#### Audio Type (One-hot encoded, 4)
 
-11. **Kekuatan_Tren_Audio** - Audio trend strength (0-1)
-12. **Kekuatan_Tren_Hashtag** - Hashtag trend strength (0-1)
+16. **Audio_Audio Lainnya**
+17. **Audio_Audio Original**
+18. **Audio_Audio Populer**
+19. **Audio_Tanpa Audio**
 
-#### Collaboration (1)
+#### Interaction Features (10, Kategori × Suka)
 
-13. **Apakah_Kolaborasi** - Is collaboration (0/1)
+20. **Interaksi_Beauty_Suka**
+21. **Interaksi_Daily_Suka**
+22. **Interaksi_Edukasi_Karir_Suka**
+23. **Interaksi_Fashion_Suka**
+24. **Interaksi_Gaming_Suka**
+25. **Interaksi_Hiburan_Suka**
+26. **Interaksi_Jedag Jedug_Suka**
+27. **Interaksi_Kuliner_Suka**
+28. **Interaksi_Musik_Konser_Suka**
+29. **Interaksi_Religi_Suka**
 
-#### Content Type (One-hot encoded, 4)
+> Catatan: model TIDAK memakai `Suka` mentah — hanya via `Interaksi_*_Suka`.
+> Skema lama (`Tipe_Konten_*`, `Komentar`, `Dibagikan`, `Jam_Sejak_Publikasi`, dll)
+> sudah tidak dipakai dan dihapus dari preprocessing/template.
 
-14. **Tipe_Konten_Lainnya**
-15. **Tipe_Konten_OOTD**
-16. **Tipe_Konten_Tutorial**
-17. **Tipe_Konten_Vlog**
+### Feature Importance (Top 5, aktual dari model)
 
-#### Audio Type (One-hot encoded, 3)
-
-18. **Tipe_Audio_Audio Lainnya**
-19. **Tipe_Audio_Audio Original**
-20. **Tipe_Audio_Audio Populer**
-
-#### Interaction Features (2)
-
-21. **Interaksi_Tutorial_x_Komentar** - Tutorial × Comments
-22. **Interaksi_OOTD_x_Dibagikan** - OOTD × Shares
-
-### Feature Importance (Top 5)
-
-1. **Dibagikan** (Shares): 32.94%
-2. **Suka** (Likes): 30.68%
-3. **Komentar** (Comments): 16.86%
-4. **Interaksi_OOTD_x_Dibagikan**: 9.21%
-5. **Jam_Sejak_Publikasi**: 2.54%
+1. **Interaksi_Hiburan_Suka**: 30.49%
+2. **Interaksi_Gaming_Suka**: 15.67%
+3. **Interaksi_Fashion_Suka**: 13.48%
+4. **Kat_Gaming**: 7.02%
+5. **Panjang_Caption**: 5.13%
 
 ---
 
@@ -352,11 +357,12 @@ tiktok-prediction-system/
 
 ### Statistics
 
-- **Total Records**: 159 videos
-- **Total Columns**: 13 (raw) + enriched features
-- **Total Views**: 6,393,014
-- **Average Engagement Rate**: 4.67%
-- **Best Video Performance**: 1,100,000 views
+- **Total Records**: 998 videos (14 kreator)
+- **Total Columns**: 19 (raw) + enriched features
+- **Total Views**: 32,127,317
+- **Average Engagement Rate**: 8.23%
+- **Best Video Performance**: 6,600,000 views
+- **Date Range**: 2021–2025
 
 ### Raw Columns
 
@@ -399,7 +405,7 @@ tiktok-prediction-system/
 
 ### 3. Single Prediction
 
-- Interactive form with 22 features
+- Interactive form (dipetakan ke 29 fitur model)
 - Real-time prediction results
 - Confidence scores and recommendations
 
@@ -426,7 +432,7 @@ tiktok-prediction-system/
 2. Sign in with GitHub
 3. Click "New app"
 4. Select your repository
-5. Set main file: `app.py`
+5. Set main file: `🏠_Beranda.py`
 6. Click "Deploy"
 
 #### Configuration
@@ -442,7 +448,7 @@ No additional configuration needed. The app will automatically:
 #### For Development
 
 ```bash
-streamlit run app.py
+streamlit run 🏠_Beranda.py
 ```
 
 #### For Production (with PM2)
@@ -452,7 +458,7 @@ streamlit run app.py
 npm install -g pm2
 
 # Create ecosystem file
-pm2 start app.py --interpreter python3 --name tiktok-app
+pm2 start 🏠_Beranda.py --interpreter python3 --name tiktok-app
 
 # Save PM2 configuration
 pm2 save
@@ -475,7 +481,7 @@ COPY . .
 
 EXPOSE 8501
 
-CMD ["streamlit", "run", "app.py", "--server.port=8501", "--server.address=0.0.0.0"]
+CMD ["streamlit", "run", "🏠_Beranda.py", "--server.port=8501", "--server.address=0.0.0.0"]
 ```
 
 #### Build and Run
@@ -519,7 +525,7 @@ pip install scikit-learn==1.6.1
 
 #### 4. **CSV Upload Error**
 
-**Solution**: Ensure CSV has all 22 required columns. Download template from Batch Prediction page.
+**Solution**: Ensure CSV has all 29 required model features. Download template from Batch Prediction page.
 
 #### 5. **Charts Not Displaying**
 
@@ -629,7 +635,16 @@ help(ModelHandler)
 
 ## 🎯 Roadmap
 
-### Version 1.0 (Current)
+### Version 1.1.0 (Current) — Opsi A schema freeze
+
+- ✅ Analytics Dashboard
+- ✅ Single Prediction (exact 29 fitur model)
+- ✅ Batch Prediction (template exact 29 fitur)
+- ✅ Preprocessing → Batch auto-load (termasuk `Audio_Tanpa Audio`)
+- ✅ Export functionality
+- ✅ Pinned requirements
+
+### Version 1.0
 
 - ✅ Analytics Dashboard
 - ✅ Single Prediction
