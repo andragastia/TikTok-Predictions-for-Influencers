@@ -159,32 +159,20 @@ def preprocess_raw_data(df_raw, reference_time=None):
     
     df['audio_type_detected'] = df.apply(dp._classify_audio_logic, axis=1)
 
-    # 5. One-hot Encoding (Dynamic based on Dictionary)
-    
-    # Kategori (Gaming, Fashion, dll)
-    all_categories = list(dp.KAMUS_KATEGORI.keys()) + ['Lainnya']
+    # 5. One-hot Encoding (EXACT skema model 29 fitur, tanpa alias lama)
+    # ponytail: alias Tipe_Konten_*/Tipe_Audio_* dihapus, model hanya baca Kat_*/Audio_*/Interaksi_*.
+    all_categories = list(dp.KAMUS_KATEGORI.keys())  # 10 kategori, tanpa 'Lainnya'
     for cat in all_categories:
-        col_name = f"Kat_{cat}"
-        # Buat kolom 1/0
-        df[col_name] = (df['content_type_detected'] == cat).astype(int)
-        
-        # Buat juga alias Tipe_Konten_X jika diperlukan untuk kompatibilitas tampilan
-        df[f"Tipe_Konten_{cat}"] = df[col_name]
+        df[f"Kat_{cat}"] = (df['content_type_detected'] == cat).astype(int)
 
-    # Audio
-    all_audios = ['Audio Original', 'Audio Populer', 'Audio Lainnya']
+    # Audio (4 kelas, termasuk Tanpa Audio agar required_features terpenuhi)
+    all_audios = ['Audio Original', 'Audio Populer', 'Audio Lainnya', 'Tanpa Audio']
     for audio in all_audios:
-        col_name = f"Audio_{audio}"
-        df[col_name] = (df['audio_type_detected'] == audio).astype(int)
-        # Alias
-        df[f"Tipe_Audio_{audio}"] = df[col_name]
+        df[f"Audio_{audio}"] = (df['audio_type_detected'] == audio).astype(int)
 
-    # 6. Interaction Features (Looping)
-    # Interaksi = Kat_X * Suka
+    # 6. Interaction Features (Kat_X * Suka, sesuai model)
     for cat in all_categories:
-        cat_col = f"Kat_{cat}"
-        interaksi_col = f"Interaksi_{cat}_Suka"
-        df[interaksi_col] = df[cat_col] * df['Suka']
+        df[f"Interaksi_{cat}_Suka"] = df[f"Kat_{cat}"] * df['Suka']
 
     # 7. Additional Features (Legacy Support/Trends)
     df['Kekuatan_Tren_Audio'] = df['audio_type_detected'].apply(lambda x: 0.9 if x == 'Audio Populer' else 0.5)

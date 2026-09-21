@@ -308,31 +308,44 @@ class DataProcessor:
         if target is None: return pd.DataFrame()
         return target.nlargest(n, 'playCount')
 
-    # --- PREDICTION FEATURES ---
+    def get_trending_threshold(self, percentile=75):
+        """Threshold trending = persentil playCount (default P75)."""
+        if self.df is None:
+            self.load_data()
+        if self.df is None or self.df.empty or 'playCount' not in self.df.columns:
+            return 0
+        try:
+            return float(self.df['playCount'].quantile(percentile / 100))
+        except Exception:
+            return 0
+
+    # --- PREDICTION FEATURES (EXACT 29 fitur model, tanpa kolom ekstra) ---
+    # ponytail: model tidak pakai Suka mentah / Kat_Lainnya, hanya Interaksi_*_Suka.
+    MODEL_CATEGORIES = ['Beauty', 'Daily', 'Edukasi_Karir', 'Fashion', 'Gaming',
+                        'Hiburan', 'Jedag Jedug', 'Kuliner', 'Musik_Konser', 'Religi']
+    MODEL_AUDIOS = ['Audio Original', 'Audio Populer', 'Audio Lainnya', 'Tanpa Audio']
+
     def prepare_features_for_prediction(self, raw_features):
         text_content = raw_features.get('text_content', '')
         detected_category = self._classify_content_logic(text_content)
-        user_audio_choice = raw_features.get('audio_type', 'Audio Lainnya') 
-        
+        user_audio_choice = raw_features.get('audio_type', 'Audio Lainnya')
+        suka_val = raw_features.get('likes', 0)
+
         features = {
+            'Durasi_Video': raw_features.get('duration', 0),
             'Jam_Posting': raw_features.get('upload_hour', 12),
             'Is_Weekend': 1 if raw_features.get('upload_day', 0) in [5, 6] else 0,
             'Panjang_Caption': raw_features.get('caption_length', 0),
             'Jumlah_Hashtag': raw_features.get('hashtag_count', 0),
-            'Suka': raw_features.get('likes', 0),
-            'Durasi_Video': raw_features.get('duration', 0)
         }
 
-        all_categories = list(self.KAMUS_KATEGORI.keys()) + ['Lainnya']
-        for cat in all_categories:
+        for cat in self.MODEL_CATEGORIES:
             features[f"Kat_{cat}"] = 1 if detected_category == cat else 0
-            
-        all_audios = ['Audio Original', 'Audio Populer', 'Audio Lainnya', 'Tanpa Audio']
-        for audio in all_audios:
+
+        for audio in self.MODEL_AUDIOS:
             features[f"Audio_{audio}"] = 1 if user_audio_choice == audio else 0
 
-        suka_val = features['Suka']
-        for cat in all_categories:
+        for cat in self.MODEL_CATEGORIES:
             features[f"Interaksi_{cat}_Suka"] = features[f"Kat_{cat}"] * suka_val
 
         return pd.DataFrame([features])

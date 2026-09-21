@@ -54,30 +54,25 @@ st.markdown("---")
 # --- TEMPLATE DOWNLOAD ---
 st.subheader("📥 Download Template CSV")
 
-# Template Data (Sesuai Model 10 Kategori)
+# Template Data (EXACT 29 fitur model + metadata; ponytail: tanpa alias lama)
 template_data = {
     'Video_ID': [1, 2], 'Caption': ['Video Gaming', 'Video Masak'],
-    'Suka': [2000, 100], 'Komentar': [50, 5], 'Dibagikan': [20, 2],
+    'Suka': [2000, 100],  # metadata untuk Interaksi (model baca Interaksi_*, bukan Suka)
     'Durasi_Video': [45, 15], 'Jumlah_Hashtag': [5, 2], 'Panjang_Caption': [50, 20],
-    'Jam_Posting': [18, 10], 'Is_Weekend': [1, 0], 'Jam_Sejak_Publikasi': [24, 5],
-    # Contoh Kategori
+    'Jam_Posting': [18, 10], 'Is_Weekend': [1, 0],
     'Kat_Gaming': [1, 0], 'Kat_Kuliner': [0, 1], 'Kat_Fashion': [0, 0],
-    # Contoh Audio
-    'Audio_Populer': [1, 0], 'Audio_Original': [0, 1], 'Audio_Lainnya': [0, 0],
-    # Contoh Interaksi
+    'Kat_Daily': [0, 0], 'Kat_Edukasi_Karir': [0, 0], 'Kat_Religi': [0, 0],
+    'Kat_Beauty': [0, 0], 'Kat_Hiburan': [0, 0],
+    'Kat_Musik_Konser': [0, 0], 'Kat_Jedag Jedug': [0, 0],
+    'Audio_Audio Populer': [1, 0], 'Audio_Audio Original': [0, 1],
+    'Audio_Audio Lainnya': [0, 0], 'Audio_Tanpa Audio': [0, 0],
     'Interaksi_Gaming_Suka': [2000, 0], 'Interaksi_Kuliner_Suka': [0, 100],
-    # Fitur Lain
-    'Kekuatan_Tren_Audio': [0.9, 0.5], 'Kekuatan_Tren_Hashtag': [0.8, 0.5],
-    'Apakah_Kolaborasi': [0, 0], 'Format_Konten_Video': [1, 1],
-    'Actual': [1, 0] # Optional
+    'Interaksi_Fashion_Suka': [0, 0], 'Interaksi_Daily_Suka': [0, 0],
+    'Interaksi_Edukasi_Karir_Suka': [0, 0], 'Interaksi_Religi_Suka': [0, 0],
+    'Interaksi_Beauty_Suka': [0, 0], 'Interaksi_Hiburan_Suka': [0, 0],
+    'Interaksi_Musik_Konser_Suka': [0, 0], 'Interaksi_Jedag Jedug_Suka': [0, 0],
+    'Actual': [1, 0]  # opsional, untuk evaluasi
 }
-# Lengkapi kolom wajib lainnya dengan 0
-for col in ['Kat_Daily', 'Kat_Edukasi_Karir', 'Kat_Religi', 'Kat_Beauty', 'Kat_Hiburan', 
-            'Kat_Musik_Konser', 'Kat_Jedag Jedug', 'Kat_Lainnya', 'Kat_Tutorial', 'Kat_Vlog', 'Kat_OOTD',
-            'Tipe_Konten_Gaming', 'Tipe_Konten_Kuliner', 'Tipe_Konten_Fashion', # Alias
-            'Tipe_Audio_Audio Original', 'Tipe_Audio_Audio Populer', 'Tipe_Audio_Audio Lainnya']:
-    if col not in template_data:
-        template_data[col] = [0, 0]
 
 template_df = pd.DataFrame(template_data)
 csv_template = template_df.to_csv(index=False)

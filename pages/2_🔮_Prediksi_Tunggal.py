@@ -74,7 +74,6 @@ st.header("📝 Masukkan Informasi Video")
 
 with st.form("prediction_form"):
     
-    # --- [BAGIAN BARU] INPUT HYBRID ---
     st.subheader("✍️ Identitas Konten")
     st.markdown("Isi **Caption** untuk deteksi otomatis, ATAU pilih **Kategori Manual** jika caption belum siap.")
     
@@ -88,7 +87,6 @@ with st.form("prediction_form"):
         )
         
     with col_input_2:
-        # Kita ubah labelnya agar jelas ini opsi manual
         content_type_manual = st.selectbox(
             "Kategori Manual (Opsi Fallback)",
             options=["OOTD", "Tutorial", "Vlog", "Gaming", "Fashion", "Kuliner", "Lainnya"],
@@ -351,28 +349,17 @@ if submitted:
                 # Display top 10 features
                 top_features = feature_imp.head(10).copy() 
                 
-                # Mapping nama fitur agar lebih user-friendly
+                # Mapping nama fitur skema 29-fitur agar user-friendly
                 rename_fitur = {
-                    'Suka': 'Jumlah Suka',
-                    'Komentar': 'Jumlah Komentar',
-                    'Dibagikan': 'Jumlah Dibagikan',
                     'Durasi_Video': 'Durasi Video',
                     'Jumlah_Hashtag': 'Jumlah Hashtag',
-                    'Jam_Sejak_Publikasi': 'Jam Sejak Publikasi',
                     'Panjang_Caption': 'Panjang Caption',
-                    'Hari_Upload': 'Hari Upload',
-                    'Jam_Upload': 'Jam Upload',
-                    'Format_Konten_Video': 'Format Video',
-                    'Tipe_Konten_Lainnya': 'Kategori: Lainnya',
-                    'Tipe_Konten_OOTD': 'Kategori: OOTD',
-                    'Tipe_Konten_Tutorial': 'Kategori: Tutorial',
-                    'Tipe_Konten_Vlog': 'Kategori: Vlog',
-                    'Tipe_Audio_Audio Lainnya': 'Audio: Lainnya',
-                    'Tipe_Audio_Audio Original': 'Audio: Original',
-                    'Tipe_Audio_Audio Populer': 'Audio: Populer'
+                    'Jam_Posting': 'Jam Upload',
+                    'Is_Weekend': 'Akhir Pekan',
                 }
 
                 top_features['feature'] = top_features['feature'].map(rename_fitur).fillna(top_features['feature'])
+                top_features['feature'] = top_features['feature'].str.replace('Kat_', 'Kategori: ', regex=False).str.replace('Audio_', 'Audio: ', regex=False).str.replace('Interaksi_', '', regex=False).str.replace('_Suka', ' x Suka', regex=False)
                 
                 fig_importance = create_bar_chart(
                     top_features,

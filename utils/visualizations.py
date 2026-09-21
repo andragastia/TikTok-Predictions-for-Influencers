@@ -43,11 +43,6 @@ def create_line_chart(df, x, y, title, xaxis_title, yaxis_title, color=None):
 
     fig = update_plotly_theme(fig)
 
-    fig = update_plotly_theme(fig)
-
-    # Apply theme
-    fig = update_plotly_theme(fig)
-
     return fig
 
 
@@ -101,9 +96,6 @@ def create_bar_chart(df, x, y, title, xaxis_title, yaxis_title, color=None, orie
 
     fig = update_plotly_theme(fig)
 
-    # Apply theme
-    fig = update_plotly_theme(fig)
-
     return fig
 
 
@@ -131,9 +123,6 @@ def create_pie_chart(values, names, title, hole=0):
         template='plotly_white'
     )
 
-    fig = update_plotly_theme(fig)
-
-    # Apply theme
     fig = update_plotly_theme(fig)
 
     return fig
@@ -174,9 +163,6 @@ def create_scatter_plot(df, x, y, title, xaxis_title, yaxis_title, color=None, s
 
     fig = update_plotly_theme(fig)
 
-    # Apply theme
-    fig = update_plotly_theme(fig)
-
     return fig
 
 
@@ -212,9 +198,6 @@ def create_heatmap(data, x_labels, y_labels, title, colorscale='Blues'):
 
     fig = update_plotly_theme(fig)
 
-    # Apply theme
-    fig = update_plotly_theme(fig)
-
     return fig
 
 
@@ -248,9 +231,6 @@ def create_box_plot(df, x, y, title, xaxis_title, yaxis_title):
 
     fig = update_plotly_theme(fig)
 
-    # Apply theme
-    fig = update_plotly_theme(fig)
-
     return fig
 
 
@@ -281,9 +261,6 @@ def create_histogram(df, x, title, xaxis_title, nbins=30):
         template='plotly_white'
     )
 
-    fig = update_plotly_theme(fig)
-
-    # Apply theme
     fig = update_plotly_theme(fig)
 
     return fig
@@ -323,9 +300,6 @@ def create_grouped_bar_chart(df, x, y_columns, title, xaxis_title, yaxis_title):
 
     fig = update_plotly_theme(fig)
 
-    # Apply theme
-    fig = update_plotly_theme(fig)
-
     return fig
 
 
@@ -359,9 +333,6 @@ def create_correlation_heatmap(corr_matrix, title="Matriks Korelasi"):
         height=600
     )
 
-    fig = update_plotly_theme(fig)
-
-    # Apply theme
     fig = update_plotly_theme(fig)
 
     return fig
@@ -400,9 +371,6 @@ def create_time_series_chart(df, date_col, value_col, title, yaxis_title):
 
     fig = update_plotly_theme(fig)
 
-    # Apply theme
-    fig = update_plotly_theme(fig)
-
     return fig
 
 
@@ -439,9 +407,6 @@ def create_multi_line_chart(df, x, y_columns, title, xaxis_title, yaxis_title):
         template='plotly_white'
     )
 
-    fig = update_plotly_theme(fig)
-
-    # Apply theme
     fig = update_plotly_theme(fig)
 
     return fig

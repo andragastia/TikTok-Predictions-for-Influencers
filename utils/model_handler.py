@@ -34,13 +34,18 @@ class ModelHandler:
             if hasattr(self.model, 'feature_names_in_'):
                 self.feature_names = list(self.model.feature_names_in_)
             else:
-                # Default feature names from inspection
+                # Fallback = skema aktual model 29 fitur (RF 100 trees, depth 10)
                 self.feature_names = [
-                    'Suka', 'Komentar', 'Dibagikan', 'Durasi_Video', 'Jumlah_Hashtag',
-                    'Jam_Sejak_Publikasi', 'Panjang_Caption', 'Hari_Upload', 'Jam_Upload',
-                    'Format_Konten_Video', 'Tipe_Konten_Lainnya', 'Tipe_Konten_OOTD',
-                    'Tipe_Konten_Tutorial', 'Tipe_Konten_Vlog', 'Tipe_Audio_Audio Lainnya',
-                    'Tipe_Audio_Audio Original', 'Tipe_Audio_Audio Populer'
+                    'Durasi_Video', 'Jam_Posting', 'Is_Weekend', 'Panjang_Caption',
+                    'Jumlah_Hashtag', 'Kat_Beauty', 'Kat_Daily', 'Kat_Edukasi_Karir',
+                    'Kat_Fashion', 'Kat_Gaming', 'Kat_Hiburan', 'Kat_Jedag Jedug',
+                    'Kat_Kuliner', 'Kat_Musik_Konser', 'Kat_Religi',
+                    'Audio_Audio Lainnya', 'Audio_Audio Original', 'Audio_Audio Populer',
+                    'Audio_Tanpa Audio', 'Interaksi_Beauty_Suka', 'Interaksi_Daily_Suka',
+                    'Interaksi_Edukasi_Karir_Suka', 'Interaksi_Fashion_Suka',
+                    'Interaksi_Gaming_Suka', 'Interaksi_Hiburan_Suka',
+                    'Interaksi_Jedag Jedug_Suka', 'Interaksi_Kuliner_Suka',
+                    'Interaksi_Musik_Konser_Suka', 'Interaksi_Religi_Suka'
                 ]
             return True
         except Exception as e:

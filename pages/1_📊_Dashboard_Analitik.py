@@ -88,7 +88,6 @@ else:
 
 
 # [UPDATE LOGIKA DATA]
-# Kita filter data mentah (raw_data) DULUAN sebelum masuk ke filter tanggal
 if selected_author != "Semua Kreator":
     base_df = data['raw_data'][data['raw_data']['authorMeta.name'] == selected_author].copy()
 else:
@@ -223,7 +222,7 @@ with col4:
 
 st.markdown("---")
 
-# ==================== [FITUR BARU] LEADERBOARD ====================
+# ============================== LEADERBOARD ==============================
 # Hanya muncul jika memilih "Semua Kreator"
 if selected_author == "Semua Kreator":
     st.header("🏆 Peringkat Kreator")
